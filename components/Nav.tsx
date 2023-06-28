@@ -5,18 +5,22 @@ import Image from "next/image";
 
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import { useState, useEffect } from "react";
+import {
+  Iproviders,
+  providersObject,
+  IproviderObject,
+} from "@interfaces/interfaces";
 
-type Props = {};
+const Nav = () => {
+  const { data: session } = useSession();
 
-const Nav = (props: Props) => {
-  const isUserLoggedIn: boolean = true;
-
-  const [providers, setProviders] = useState(null);
+  const [providers, setProviders] = useState<providersObject>(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
 
   useEffect(() => {
     const setUpProviders = async () => {
-      const response: any = await getProviders();
+      const response = await getProviders();
+      // @ts-ignore
       setProviders(response);
     };
     setUpProviders();
@@ -37,14 +41,14 @@ const Nav = (props: Props) => {
 
       {/* Desktop navigation */}
       <div className="sm:flex hidden">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
               Create post
             </Link>
             <button
               type="button"
-              onClick={() => signOut}
+              onClick={() => signOut()}
               className="outline_btn"
             >
               Sign Out
@@ -52,7 +56,12 @@ const Nav = (props: Props) => {
             <Link href="/profile">
               <Image
                 className="rounded-full"
-                src="/assets/images/logo.svg"
+                // @ts-ignore
+                src={
+                  session?.user
+                    ? session?.user.image
+                    : "/assets/images/logo.svg"
+                }
                 width={37}
                 height={37}
                 alt="profile picture"
@@ -62,27 +71,35 @@ const Nav = (props: Props) => {
         ) : (
           <>
             {providers &&
-              Object.values(providers).map((provider: any) => (
-                <button
-                  type="button"
-                  key={provider.name}
-                  onClick={() => signIn(provider.id)}
-                  className="black_btn"
-                >
-                  Sign In
-                </button>
-              ))}
+              // @ts-ignore
+              Object.values(providers).map((provider: Iproviders) => {
+                console.log("== provider ==", provider);
+                console.log("== typeof provider ==", typeof provider);
+                return (
+                  <button
+                    type="button"
+                    key={provider.name}
+                    onClick={() => signIn(provider.id)}
+                    className="black_btn"
+                  >
+                    Sign In
+                  </button>
+                );
+              })}
           </>
         )}
       </div>
 
       {/* Mobile navigation*/}
       <div className="sm:hidden flex relative">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex">
             <Image
               className="rounded-full"
-              src="/assets/images/logo.svg"
+              // @ts-ignore
+              src={
+                session?.user ? session.user.image : "/assets/images/logo.svg"
+              }
               width={37}
               height={37}
               alt="profile picture"
@@ -123,7 +140,8 @@ const Nav = (props: Props) => {
         ) : (
           <>
             {providers &&
-              Object.values(providers).map((provider: any) => (
+              // @ts-ignore
+              Object.values(providers).map((provider: IproviderObject) => (
                 <button
                   type="button"
                   key={provider.name}
