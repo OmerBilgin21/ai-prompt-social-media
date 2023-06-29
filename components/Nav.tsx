@@ -72,20 +72,16 @@ const Nav = () => {
           <>
             {providers &&
               // @ts-ignore
-              Object.values(providers).map((provider: Iproviders) => {
-                console.log("== provider ==", provider);
-                console.log("== typeof provider ==", typeof provider);
-                return (
-                  <button
-                    type="button"
-                    key={provider.name}
-                    onClick={() => signIn(provider.id)}
-                    className="black_btn"
-                  >
-                    Sign In
-                  </button>
-                );
-              })}
+              Object.values(providers).map((provider: Iproviders) => (
+                <button
+                  type="button"
+                  key={provider.name}
+                  onClick={() => signIn(provider.id)}
+                  className="black_btn"
+                >
+                  Sign In
+                </button>
+              ))}
           </>
         )}
       </div>

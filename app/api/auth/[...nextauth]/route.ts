@@ -25,7 +25,6 @@ const handler = NextAuth({
     },
     // @ts-ignore
     async signIn({ profile }: signInFunctionProps) {
-      console.log("== profile ==", profile);
       try {
         await connectToDB();
         const userExists = await User.findOne({ email: profile.email });
